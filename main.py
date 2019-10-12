@@ -14,10 +14,11 @@ from set_calibration_line import SetCalibrationLine
 from config import Config
 
 
-class Window(QMainWindow, Ui_MainWindow):
+class Window(QMainWindow):
     def __init__(self):
         super(Window, self).__init__()
-        self.setupUi(self)
+        self.Ui_MainWindow = Ui_MainWindow()
+        self.Ui_MainWindow.setupUi(self)
 
         self.set_calibration_line_pane = SetCalibrationLine()
         self.set_calibration_line_pane.setWindowModality(Qt.ApplicationModal)  # 设置为模态窗口
@@ -26,13 +27,6 @@ class Window(QMainWindow, Ui_MainWindow):
         self._thread.signal.connect(self.show_video)
         self.conf = Config()
 
-        self.plant = ''
-        self.product = ''
-        self.marble_number = 0
-        self.row_number = 0
-        self.setup()
-
-    def setup(self):
         # 获取厂家名
         self.plant = self.conf.read_config('product', 'plant')
         # 获取产品名
@@ -41,20 +35,8 @@ class Window(QMainWindow, Ui_MainWindow):
         self.marble_number = int(self.conf.read_config('product', 'marble_number'))
         # 单排齿还是多排齿
         self.row_number = int(self.conf.read_config('product', 'row_number'))
-        # 设置控件值
-        self.lineEdit_plant.setText(self.plant)
-        self.lineEdit_product.setText(self.product)
-        self.lineEdit_marble_number.setText(str(self.marble_number))
-        if self.row_number == 1:
-            self.radioButton_single_row.setCheckable(True)
-            self.radioButton_single_row.setChecked(True)
-            self.radioButton_double_row.setCheckable(False)
-        elif self.row_number == 2:
-            self.radioButton_double_row.setCheckable(True)
-            self.radioButton_double_row.setChecked(True)
-            self.radioButton_single_row.setCheckable(False)
 
-        self.comboBox_change_product.addItem('')
+        self.Ui_MainWindow.comboBox_change_product.addItem('')
         with sqlite3.connect('keyid.db') as conn:
             cur = conn.cursor()
             cur.execute("SELECT plant, product, marble_number, rows FROM products")
@@ -63,7 +45,23 @@ class Window(QMainWindow, Ui_MainWindow):
                 plant = row[0]
                 product = row[1]
                 item = plant + ":" + product
-                self.comboBox_change_product.addItem(item)
+                self.Ui_MainWindow.comboBox_change_product.addItem(item)
+
+        self.setup()
+
+    def setup(self):
+        # 设置控件值
+        self.Ui_MainWindow.lineEdit_plant.setText(self.plant)
+        self.Ui_MainWindow.lineEdit_product.setText(self.product)
+        self.Ui_MainWindow.lineEdit_marble_number.setText(str(self.marble_number))
+        if self.row_number == 1:
+            self.Ui_MainWindow.radioButton_single_row.setCheckable(True)
+            self.Ui_MainWindow.radioButton_single_row.setChecked(True)
+            self.Ui_MainWindow.radioButton_double_row.setCheckable(False)
+        elif self.row_number == 2:
+            self.Ui_MainWindow.radioButton_double_row.setCheckable(True)
+            self.Ui_MainWindow.radioButton_double_row.setChecked(True)
+            self.Ui_MainWindow.radioButton_single_row.setCheckable(False)
 
     def start(self):
         self._thread.working = True
@@ -85,17 +83,7 @@ class Window(QMainWindow, Ui_MainWindow):
                 self.marble_number = row[2]
                 self.row_number = row[3]
 
-            self.lineEdit_plant.setText(self.plant)
-            self.lineEdit_product.setText(self.product)
-            self.lineEdit_marble_number.setText(str(self.marble_number))
-            if self.row_number == 1:
-                self.radioButton_single_row.setCheckable(True)
-                self.radioButton_single_row.setChecked(True)
-                self.radioButton_double_row.setCheckable(False)
-            elif self.row_number == 2:
-                self.radioButton_double_row.setCheckable(True)
-                self.radioButton_double_row.setChecked(True)
-                self.radioButton_single_row.setCheckable(False)
+            self.setup()
 
             # 修改config.ini文件
             self.conf.update_config(section='product', name='plant', value=self.plant)
@@ -117,7 +105,7 @@ class Window(QMainWindow, Ui_MainWindow):
         cap = cv.VideoCapture(0)
         res, frame = cap.read()
         img = QImage(frame, frame.shape[1], frame.shape[0], QImage.Format_RGB888)
-        self.label_show_image.setPixmap(QPixmap.fromImage(img))
+        self.Ui_MainWindow.label_show_image.setPixmap(QPixmap.fromImage(img))
         cap.release()
         print(res, frame)
 
@@ -129,7 +117,7 @@ class Window(QMainWindow, Ui_MainWindow):
 
     def show_video(self):
         img = QImage(self._thread.img, self._thread.img.shape[1], self._thread.img.shape[0], QImage.Format_RGB888)
-        self.label_show_image.setPixmap(QPixmap.fromImage(img))
+        self.Ui_MainWindow.label_show_image.setPixmap(QPixmap.fromImage(img))
         # print("发送信号了")
 
     def get_keyid(self, key):
@@ -210,8 +198,8 @@ class Window(QMainWindow, Ui_MainWindow):
         print(keyid)
         keycode = self.get_keycode(keyid)
         print(keycode)
-        self.lineEdit_key_code.setText(keycode)
-        self.lineEdit_key_id.setText(keyid)
+        self.Ui_MainWindow.lineEdit_key_code.setText(keycode)
+        self.Ui_MainWindow.lineEdit_key_id.setText(keyid)
         cv.waitKey(0)
         cv.destroyAllWindows()
 
