@@ -35,6 +35,9 @@ class Window(QMainWindow):
         self.marble_number = int(self.conf.read_config('product', 'marble_number'))
         # 单排齿还是多排齿
         self.row_number = int(self.conf.read_config('product', 'row_number'))
+        # # 阈值
+        # self.min_threshold = int(self.conf.read_config('canny', 'min_threshold'))
+        # self.max_threshold = int(self.conf.read_config('canny', 'max_threshold'))
 
         self.Ui_MainWindow.comboBox_change_product.addItem('')
         with sqlite3.connect('keyid.db') as conn:
@@ -46,6 +49,8 @@ class Window(QMainWindow):
                 product = row[1]
                 item = plant + ":" + product
                 self.Ui_MainWindow.comboBox_change_product.addItem(item)
+
+        self.Ui_MainWindow.label_status.setText("自动读钥匙号，请点击'开始'按钮")
 
         self.setup()
 
@@ -63,11 +68,13 @@ class Window(QMainWindow):
             self.Ui_MainWindow.radioButton_double_row.setChecked(True)
             self.Ui_MainWindow.radioButton_single_row.setCheckable(False)
 
+    # 槽函数
     def start(self):
         self._thread.working = True
         if not self._thread.cap.isOpened():
             self._thread.cap.open(0)
         self._thread.start()
+        self.Ui_MainWindow.label_status.setText('等待钥匙插入')
 
     def change_product(self, item):
         if item:  # 若果选择了非空项目
@@ -78,6 +85,7 @@ class Window(QMainWindow):
                 cur.execute("SELECT plant, product, marble_number, rows FROM products WHERE product ='%s'" % product)
                 rows = cur.fetchall()
                 row = rows[0]  # 应该只有一条数据
+                # 修改变量值
                 self.plant = row[0]
                 self.product = row[1]
                 self.marble_number = row[2]
@@ -95,19 +103,27 @@ class Window(QMainWindow):
         pass
 
     def self_calibration(self):
+        # 暂停读取摄像头进程，并释放摄像头
+        self._thread.working = False
         step = 1
         while step < 5:
-            cv.waitKey()
-            if step == 1:
-                pass
-
-        print(self._thread.cap.isOpened())
-        cap = cv.VideoCapture(0)
-        res, frame = cap.read()
-        img = QImage(frame, frame.shape[1], frame.shape[0], QImage.Format_RGB888)
-        self.Ui_MainWindow.label_show_image.setPixmap(QPixmap.fromImage(img))
-        cap.release()
-        print(res, frame)
+            self.Ui_MainWindow.label_status.setText('自动校准：请插入%s号钥匙' % step)
+            if self.ke_is_ready():  # 如果感应到钥匙插入
+                res, frame = self._thread.cap.read()
+                img = QImage(frame, frame.shape[1], frame.shape[0], QImage.Format_RGB888)
+                self.Ui_MainWindow.label_show_image.setPixmap(QPixmap.fromImage(img))
+                keyid = self.edge_detect(self_calibration=True)
+                if step == 1:
+                    self.conf.update_config(section='key', name='one', value=str(keyid))
+                elif step == 2:
+                    self.conf.update_config(section='key', name='two', value=str(keyid))
+                if step == 3:
+                    self.conf.update_config(section='key', name='three', value=str(keyid))
+                if step == 4:
+                    self.conf.update_config(section='key', name='four', value=str(keyid))
+                step += 1
+        self.Ui_MainWindow.label_status.setText('校准结束，点击开始进行工作')
+                
 
     def set_calibration_line(self):
         # 暂停读取摄像头进程，并释放摄像头，然后调用设置校准线的窗口
@@ -116,38 +132,32 @@ class Window(QMainWindow):
         self.set_calibration_line_pane.show()
 
     def show_video(self):
-        img = QImage(self._thread.img, self._thread.img.shape[1], self._thread.img.shape[0], QImage.Format_RGB888)
-        self.Ui_MainWindow.label_show_image.setPixmap(QPixmap.fromImage(img))
+        if self.key_is_ready():  # 如果有钥匙进入
+            # 捕获图像并判断钥匙号
+            self.capture()
+        else:
+            img = QImage(self._thread.img, self._thread.img.shape[1], self._thread.img.shape[0], QImage.Format_RGB888)
+            self.Ui_MainWindow.label_show_image.setPixmap(QPixmap.fromImage(img))
         # print("发送信号了")
 
-    def get_keyid(self, key):
-        one = int(self.conf.read_config('key', 'one'))
-        two = int(self.conf.read_config('key', 'two'))
-        three = int(self.conf.read_config('key', 'three'))
-        four = int(self.conf.read_config('key', 'four'))
-        tolerance = int(self.conf.read_config('key', 'tolerance'))
-        if one - tolerance < key < one + tolerance:
-            return '1'
-        elif two - tolerance < key < two + tolerance:
-            return '2'
-        elif three - tolerance < key < three + tolerance:
-            return '3'
-        elif four - tolerance < key < four + tolerance:
-            return '4'
-        else:
-            return 'X'
+    def manual_capture(self):
+        keyid, canny = self.edge_detect(is_capture=True)
+        keycode = self.get_keycode(keyid)
+        self.Ui_MainWindow.lineEdit_key_code.setText(keycode)
+        self.Ui_MainWindow.lineEdit_key_id.setText(keyid)
+        cv.imshow('Canny', canny)
+        cv.waitKey()
+        cv.destroyAllWindows()
 
-    def get_keycode(self, keyid):
-        with sqlite3.connect('keyid.db') as conn:
-            c = conn.cursor()
-            rows = c.execute("SELECT keycode from %s WHERE keyid='%s'" % (self.product, keyid)).fetchall()
-            keycode = rows[0][0]
-            return keycode
-
-    def capture(self):
-        print('点击了查看图像')
-        original_img = cv.imread("key.jpg", 0)
-        # original_img = self._thread.img
+    # 自定义函数
+    # 边缘检测
+    def edge_detect(self, self_calibration=False, check_key_is_ready=False, is_capture=False):
+        # original_img = cv.imread("key.jpg")
+        if self._thread.working:  # 如果线程正在工作
+            original_img = self._thread.img
+        else:  
+            _, original_img = self._thread.cap.read()
+        original_img = cv.flip(original_img, 1)  # 水平翻转
         # 画线的粗细和类型
         thickness = int(self.conf.read_config('line', 'thickness'))
         lineType = int(self.conf.read_config('line', 'lineType'))
@@ -176,9 +186,9 @@ class Window(QMainWindow):
         for pt in pts_vertical:
             cv.line(original_img, pt[0], pt[1], point_color_vertical, thickness, lineType)
 
-        # canny(): 边缘检测
-        img1 = cv.GaussianBlur(original_img, (3, 3), 0)
-        canny = cv.Canny(img1, 200, 255)
+        # 阈值
+        min_threshold = int(self.conf.read_config('canny', 'min_threshold'))
+        max_threshold = int(self.conf.read_config('canny', 'max_threshold'))
 
         # 形态学：边缘检测
         # _, Thr_img = cv.threshold(original_img, 210, 255, cv.THRESH_BINARY)  # 设定红色通道阈值210（阈值影响梯度运算效果）
@@ -187,22 +197,107 @@ class Window(QMainWindow):
         # cv.imshow("original_img", original_img)
         # cv.imshow("gradient", gradient)
         # cv.imshow('Canny', canny)
-
-        keyid = ''
-        for pt in pts_vertical:
+        if self_calibration:  # 如果是自动校准
+            # canny(): 边缘检测
+            img1 = cv.GaussianBlur(original_img, (3, 3), 0)
+            canny = cv.Canny(img1, min_threshold, max_threshold)
+            keyid = 0
+            for pt in pts_vertical:
+                for i in range(ptStart_top[1] + 2, ptStart_bottom[1]):
+                    if canny[i][pt[0][0]] == 255:
+                        keyid += i
+                        break
+            keyid = int(keyid/self.marble_number)
+            cv.line(original_img, (ptStart_top[0], keyid), (ptEnd_top[0], keyid), point_color_top, thickness, lineType)
+            img = QImage(original_img, original_img.shape[1], original_img.shape[0], QImage.Format_RGB888)
+        elif check_key_is_ready:  # 如果要怕段钥匙是否已到位
+            # canny(): 边缘检测
+            img1 = cv.GaussianBlur(original_img, (3, 3), 0)
+            canny = cv.Canny(img1, min_threshold, max_threshold)
+            keyid = 0
             for i in range(ptStart_top[1] + 2, ptStart_bottom[1]):
-                if canny[i][pt[0][0]] == 255:
-                    keyid += self.get_keyid(i)
-                    print(i)
-                    break
+                    if canny[i][pts_vertical[0][0][0]] == 255:
+                        keyid = i
+                        break
+        
+        elif is_capture:  # 检测keyid
+            one = int(self.conf.read_config('key', 'one'))
+            two = int(self.conf.read_config('key', 'two'))
+            three = int(self.conf.read_config('key', 'three'))
+            four = int(self.conf.read_config('key', 'four'))
+            # 画4条标准线
+            cv.line(original_img, (ptStart_top[0], one), (ptEnd_top[0], one), point_color_top, thickness, lineType)
+            cv.line(original_img, (ptStart_top[0], two), (ptEnd_top[0], two), point_color_top, thickness, lineType)
+            cv.line(original_img, (ptStart_top[0], three), (ptEnd_top[0], three), point_color_top, thickness, lineType)
+            cv.line(original_img, (ptStart_top[0], four), (ptEnd_top[0], four), point_color_top, thickness, lineType)
+            img = QImage(original_img, original_img.shape[1], original_img.shape[0], QImage.Format_RGB888)
+
+            # canny(): 边缘检测
+            img1 = cv.GaussianBlur(original_img, (3, 3), 0)
+            canny = cv.Canny(img1, min_threshold, max_threshold)
+
+            keyid = ''
+            for pt in pts_vertical:
+                for i in range(ptStart_top[1] + 2, ptStart_bottom[1]):
+                    if canny[i][pt[0][0]] == 255:
+                        keyid += self.get_keyid(i)
+                        break
+                    elif i >= ptStart_bottom[1]-1:
+                        keyid += 'X'
+
+        self.Ui_MainWindow.label_show_image.setPixmap(QPixmap.fromImage(img))
+        return keyid, canny
+
+    # 获取keyid
+    def get_keyid(self, key):
+        one = int(self.conf.read_config('key', 'one'))
+        two = int(self.conf.read_config('key', 'two'))
+        three = int(self.conf.read_config('key', 'three'))
+        four = int(self.conf.read_config('key', 'four'))
+        tolerance = int(self.conf.read_config('key', 'tolerance'))
+        if one - tolerance < key < one + tolerance:
+            return '1'
+        elif two - tolerance < key < two + tolerance:
+            return '2'
+        elif three - tolerance < key < three + tolerance:
+            return '3'
+        elif four - tolerance < key < four + tolerance:
+            return '4'
+        else:
+            return 'X'
+
+    # 获取keycode
+    def get_keycode(self, keyid):
+        with sqlite3.connect('keyid.db') as conn:
+            c = conn.cursor()
+            rows = c.execute("SELECT keycode from %s WHERE keyid='%s'" % (self.product, keyid)).fetchall()
+            try:
+                keycode = rows[0][0]
+                return keycode
+            except Exception as e:
+                self.Ui_MainWindow.label_status.setText('get_keycode:%s' % str(e))
+                return '----'
+
+    # 捕获，测量
+    def capture(self):
+        sleep(2)
+        keyid, canny = self.edge_detect(is_capture=True)
         print(keyid)
         keycode = self.get_keycode(keyid)
         print(keycode)
         self.Ui_MainWindow.lineEdit_key_code.setText(keycode)
         self.Ui_MainWindow.lineEdit_key_id.setText(keyid)
-        cv.waitKey(0)
-        cv.destroyAllWindows()
 
+    # 钥匙是否插到位
+    def key_is_ready(self):
+        # 最底线的纵坐标
+        line_bottom_y = eval(self.conf.read_config('line', 'ptstart_bottom'))
+        keyid = self.edge_detect(is_capture=True)
+        # 如果边缘在底线上方，则表明有钥匙进入
+        if keyid < line_bottom_y:
+            return True
+        else:
+            return False
 
 class VideoThread(QThread):
     signal = Signal()
@@ -231,7 +326,7 @@ class VideoThread(QThread):
             sleep(0.1)
             # Capture frame-by-frame
             ret, frame = self.cap.read()
-
+            frame = cv.flip(frame, 1)  # 水平翻转
             # if frame is read correctly ret is True
             if not ret:
                 print("Can't receive frame (stream end?). Exiting ...")
