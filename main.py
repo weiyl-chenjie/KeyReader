@@ -75,16 +75,22 @@ class Window(QMainWindow):
             self._thread.cap.open(0)
         self._thread.start()
         self.Ui_MainWindow.label_status.setText('等待钥匙插入')
+        self.Ui_MainWindow.label_status.setStyleSheet('background-color: rgb(255, 255, 127);')
 
     def change_product(self, item):
+        self.Ui_MainWindow.label_status.setStyleSheet('background-color: rgb(255, 255, 127);')
         if item:  # 若果选择了非空项目
             product = item.split(":")[1]
             print(product)
             with sqlite3.connect('keyid.db') as conn:
-                cur = conn.cursor()
-                cur.execute("SELECT plant, product, marble_number, rows FROM products WHERE product ='%s'" % product)
-                rows = cur.fetchall()
-                row = rows[0]  # 应该只有一条数据
+                try:
+                    cur = conn.cursor()
+                    cur.execute("SELECT plant, product, marble_number, rows FROM products WHERE product ='%s'" % product)
+                    rows = cur.fetchall()
+                    row = rows[0]  # 应该只有一条数据
+                except Exception as e:
+                    self.Ui_MainWindow.label_status.setText('change_product:%s' % str(e))
+                    self.Ui_MainWindow.label_status.setStyleSheet('background-color: rgb(255, 0, 0);')
                 # 修改变量值
                 self.plant = row[0]
                 self.product = row[1]
@@ -123,7 +129,6 @@ class Window(QMainWindow):
                     self.conf.update_config(section='key', name='four', value=str(keyid))
                 step += 1
         self.Ui_MainWindow.label_status.setText('校准结束，点击开始进行工作')
-                
 
     def set_calibration_line(self):
         # 暂停读取摄像头进程，并释放摄像头，然后调用设置校准线的窗口
@@ -268,15 +273,16 @@ class Window(QMainWindow):
 
     # 获取keycode
     def get_keycode(self, keyid):
-        with sqlite3.connect('keyid.db') as conn:
-            c = conn.cursor()
-            rows = c.execute("SELECT keycode from %s WHERE keyid='%s'" % (self.product, keyid)).fetchall()
-            try:
+        try:
+            with sqlite3.connect('keyid.db') as conn:
+                c = conn.cursor()
+                rows = c.execute("SELECT keycode FROM '%s' WHERE keyid='%s'" % (self.product, keyid)).fetchall()
                 keycode = rows[0][0]
                 return keycode
-            except Exception as e:
-                self.Ui_MainWindow.label_status.setText('get_keycode:%s' % str(e))
-                return '----'
+        except Exception as e:
+            self.Ui_MainWindow.label_status.setText('get_keycode:%s' % str(e))
+            self.Ui_MainWindow.label_status.setStyleSheet('background-color: rgb(255, 0, 0);')
+            return '----'
 
     # 捕获，测量
     def capture(self):
