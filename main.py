@@ -152,12 +152,12 @@ class Window(QMainWindow):
     # 自定义函数
     # 边缘检测
     def edge_detect(self, self_calibration=False, check_key_is_ready=False, is_capture=False):
-        # original_img = cv.imread("key.jpg")
         if self._thread.working:  # 如果线程正在工作
             original_img = self._thread.img
         else:  
             _, original_img = self._thread.cap.read()
         original_img = cv.flip(original_img, 1)  # 水平翻转
+        original_img = cv.imread("key.jpg")
         # 画线的粗细和类型
         thickness = int(self.conf.read_config('line', 'thickness'))
         lineType = int(self.conf.read_config('line', 'lineType'))
@@ -175,13 +175,13 @@ class Window(QMainWindow):
 
         # 竖线（对准弹子）
         pts_vertical = eval(self.conf.read_config('line', 'pts_vertical'))
-        # marble_number = int(self.conf.read_config('product', 'marble_number'))
+        pts_vertical_interval = int(self.conf.read_config('line', 'pts_vertical_interval'))
         for i in range(self.marble_number):
-            if i < 2:
+            if i < 1:
                 continue
             pts_vertical.append(
-                [(pts_vertical[0][0][0] + (pts_vertical[1][0][0] - pts_vertical[0][0][0]) * i, pts_vertical[0][0][1]),
-                 (pts_vertical[0][0][0] + (pts_vertical[1][0][0] - pts_vertical[0][0][0]) * i, pts_vertical[0][1][1])])
+                [(pts_vertical[0][0][0] + pts_vertical_interval * i, pts_vertical[0][0][1]),
+                 (pts_vertical[0][1][0] + pts_vertical_interval * i, pts_vertical[0][1][1])])
         point_color_vertical = (255, 0, 0)  # BGR
         for pt in pts_vertical:
             cv.line(original_img, pt[0], pt[1], point_color_vertical, thickness, lineType)
@@ -216,9 +216,9 @@ class Window(QMainWindow):
             canny = cv.Canny(img1, min_threshold, max_threshold)
             keyid = 0
             for i in range(ptStart_top[1] + 2, ptStart_bottom[1]):
-                    if canny[i][pts_vertical[0][0][0]] == 255:
-                        keyid = i
-                        break
+                if canny[i][pts_vertical[0][0][0]] == 255:
+                    keyid = i
+                    break
         
         elif is_capture:  # 检测keyid
             one = int(self.conf.read_config('key', 'one'))
@@ -298,6 +298,7 @@ class Window(QMainWindow):
             return True
         else:
             return False
+
 
 class VideoThread(QThread):
     signal = Signal()

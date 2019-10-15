@@ -23,13 +23,10 @@ class SetCalibrationLine(QWidget, Ui_Form):
         ptEnd_top_x, ptEnd_top_y = eval(self.conf.read_config('line', 'ptEnd_top'))
 
         pts_vertical = eval(self.conf.read_config('line', 'pts_vertical'))
-        pts_vertical1, pts_vertical2 = pts_vertical
-        pts_vertical1_start, pts_vertical1_end = pts_vertical1
-        pts_vertical2_start, pts_vertical2_end = pts_vertical2
-        pts_vertical1_start_x, pts_vertical1_start_y = pts_vertical1_start
-        pts_vertical1_end_x, pts_vertical1_end_y = pts_vertical1_end
-        pts_vertical2_start_x, pts_vertical2_start_y = pts_vertical2_start
-        pts_vertical2_end_x, pts_vertical2_end_y = pts_vertical2_end
+        pts_vertical_start, pts_vertical_end = pts_vertical[0]
+        pts_vertical_start_x, pts_vertical_start_y = pts_vertical_start
+        pts_vertical_end_x, pts_vertical_end_y = pts_vertical_end
+        pts_vertical_interval = int(self.conf.read_config('line', 'pts_vertical_interval'))
 
         min_threshold = int(self.conf.read_config('canny', 'min_threshold'))
         max_threshold = int(self.conf.read_config('canny', 'max_threshold'))
@@ -44,25 +41,21 @@ class SetCalibrationLine(QWidget, Ui_Form):
         self.spinBox_ptEnd_top_x.setValue(ptEnd_top_x)
         self.spinBox_ptEnd_top_y.setValue(ptEnd_top_y)
 
-        self.spinBox_pts_vertical1_start_x.setValue(pts_vertical1_start_x)
-        self.spinBox_pts_vertical1_start_y.setValue(pts_vertical1_start_y)
-        self.spinBox_pts_vertical1_end_x.setValue(pts_vertical1_end_x)
-        self.spinBox_pts_vertical1_end_y.setValue(pts_vertical1_end_y)
-
-        self.spinBox_pts_vertical2_start_x.setValue(pts_vertical2_start_x)
-        self.spinBox_pts_vertical2_start_y.setValue(pts_vertical2_start_y)
-        self.spinBox_pts_vertical2_end_x.setValue(pts_vertical2_end_x)
-        self.spinBox_pts_vertical2_end_y.setValue(pts_vertical2_end_y)
+        self.spinBox_pts_vertical_start_x.setValue(pts_vertical_start_x)
+        self.spinBox_pts_vertical_start_y.setValue(pts_vertical_start_y)
+        self.spinBox_pts_vertical_end_x.setValue(pts_vertical_end_x)
+        self.spinBox_pts_vertical_end_y.setValue(pts_vertical_end_y)
+        self.spinBox_pts_vertical_interval.setValue(pts_vertical_interval)
 
         self.spinBox_min_threshold.setValue(min_threshold)
         self.spinBox_max_threshold.setValue(max_threshold)
 
     def check(self):
         print('点击了查看')
-        # original_img = cv.imread("key.jpg")
         cap = cv.VideoCapture(0)
         res, original_img = cap.read()
         original_img = cv.flip(original_img, 1)  # 水平翻转
+        original_img = cv.imread("key.jpg")
         # 画线的粗细和类型
         thickness = int(self.conf.read_config('line', 'thickness'))
         lineType = int(self.conf.read_config('line', 'lineType'))
@@ -79,16 +72,15 @@ class SetCalibrationLine(QWidget, Ui_Form):
         cv.line(original_img, ptStart_top, ptEnd_top, point_color_top, thickness, lineType)
 
         # 竖线（对准弹子）
-        pts_vertical = [[(self.spinBox_pts_vertical1_start_x.value(), self.spinBox_pts_vertical1_start_y.value()),
-                         (self.spinBox_pts_vertical1_end_x.value(), self.spinBox_pts_vertical1_end_y.value())],
-                        [(self.spinBox_pts_vertical2_start_x.value(), self.spinBox_pts_vertical2_start_y.value()),
-                         (self.spinBox_pts_vertical2_end_x.value(), self.spinBox_pts_vertical2_end_y.value())]]
+        pts_vertical = [[(self.spinBox_pts_vertical_start_x.value(), self.spinBox_pts_vertical_start_y.value()),
+                        (self.spinBox_pts_vertical_end_x.value(), self.spinBox_pts_vertical_end_y.value())]]
+        pts_vertical_interval = self.spinBox_pts_vertical_interval.value()
         for i in range(self.marble_number):
-            if i < 2:
+            if i < 1:
                 continue
             pts_vertical.append(
-                [(pts_vertical[0][0][0] + (pts_vertical[1][0][0] - pts_vertical[0][0][0]) * i, pts_vertical[0][0][1]),
-                 (pts_vertical[0][0][0] + (pts_vertical[1][0][0] - pts_vertical[0][0][0]) * i, pts_vertical[0][1][1])])
+                [(pts_vertical[0][0][0] + pts_vertical_interval * i, pts_vertical[0][0][1]),
+                 (pts_vertical[0][1][0] + pts_vertical_interval * i, pts_vertical[0][1][1])])
         point_color_vertical = (255, 0, 0)  # BGR
         for pt in pts_vertical:
             cv.line(original_img, pt[0], pt[1], point_color_vertical, thickness, lineType)
@@ -106,10 +98,10 @@ class SetCalibrationLine(QWidget, Ui_Form):
         ptEnd_bottom = (self.spinBox_ptEnd_bottom_x.value(), self.spinBox_ptEnd_bottom_y.value())
         ptStart_top = (self.spinBox_ptStart_top_x.value(), self.spinBox_ptStart_top_y.value())
         ptEnd_top = (self.spinBox_ptEnd_top_x.value(), self.spinBox_ptEnd_top_y.value())
-        pts_vertical = [[(self.spinBox_pts_vertical1_start_x.value(), self.spinBox_pts_vertical1_start_y.value()),
-                         (self.spinBox_pts_vertical1_end_x.value(), self.spinBox_pts_vertical1_end_y.value())],
-                        [(self.spinBox_pts_vertical2_start_x.value(), self.spinBox_pts_vertical2_start_y.value()),
-                         (self.spinBox_pts_vertical2_end_x.value(), self.spinBox_pts_vertical2_end_y.value())]]
+        pts_vertical = [[(self.spinBox_pts_vertical_start_x.value(), self.spinBox_pts_vertical_start_y.value()),
+                        (self.spinBox_pts_vertical_end_x.value(), self.spinBox_pts_vertical_end_y.value())]]
+        pts_vertical_interval = self.spinBox_pts_vertical_interval.value()
+
         min_threshold = self.spinBox_min_threshold.value()
         max_threshold = self.spinBox_max_threshold.value()
 
@@ -118,6 +110,7 @@ class SetCalibrationLine(QWidget, Ui_Form):
         self.conf.update_config(section='line', name='ptStart_top', value=str(ptStart_top))
         self.conf.update_config(section='line', name='ptEnd_top', value=str(ptEnd_top))
         self.conf.update_config(section='line', name='pts_vertical', value=str(pts_vertical))
+        self.conf.update_config(section='line', name='pts_vertical_interval', value=str(pts_vertical_interval))
         self.conf.update_config(section='canny', name='min_threshold', value=str(min_threshold))
         self.conf.update_config(section='canny', name='max_threshold', value=str(max_threshold))
         self.close()

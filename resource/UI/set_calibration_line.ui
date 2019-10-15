@@ -99,7 +99,7 @@
      <x>60</x>
      <y>30</y>
      <width>391</width>
-     <height>401</height>
+     <height>371</height>
     </rect>
    </property>
    <property name="font">
@@ -114,14 +114,14 @@
    <widget class="QWidget" name="">
     <property name="geometry">
      <rect>
-      <x>11</x>
-      <y>40</y>
-      <width>372</width>
-      <height>346</height>
+      <x>10</x>
+      <y>41</y>
+      <width>359</width>
+      <height>307</height>
      </rect>
     </property>
-    <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="0">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
       <layout class="QHBoxLayout" name="horizontalLayout_9">
        <item>
         <widget class="QLabel" name="label_Axis">
@@ -182,7 +182,7 @@
        </item>
       </layout>
      </item>
-     <item row="1" column="0">
+     <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
         <widget class="QLabel" name="label_">
@@ -273,7 +273,7 @@
        </item>
       </layout>
      </item>
-     <item row="2" column="0">
+     <item>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
         <widget class="QLabel" name="label_2">
@@ -358,7 +358,7 @@
        </item>
       </layout>
      </item>
-     <item row="3" column="0">
+     <item>
       <layout class="QHBoxLayout" name="horizontalLayout_3">
        <item>
         <widget class="QLabel" name="label_3">
@@ -443,7 +443,7 @@
        </item>
       </layout>
      </item>
-     <item row="4" column="0">
+     <item>
       <layout class="QHBoxLayout" name="horizontalLayout_4">
        <item>
         <widget class="QLabel" name="label_4">
@@ -528,7 +528,7 @@
        </item>
       </layout>
      </item>
-     <item row="5" column="0">
+     <item>
       <layout class="QHBoxLayout" name="horizontalLayout_5">
        <item>
         <widget class="QLabel" name="label_5">
@@ -545,12 +545,12 @@
           </font>
          </property>
          <property name="text">
-          <string>弹子线1起点:</string>
+          <string>弹子线起点:</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QSpinBox" name="spinBox_pts_vertical1_start_x">
+        <widget class="QSpinBox" name="spinBox_pts_vertical_start_x">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -581,7 +581,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QSpinBox" name="spinBox_pts_vertical1_start_y">
+        <widget class="QSpinBox" name="spinBox_pts_vertical_start_y">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -613,7 +613,7 @@
        </item>
       </layout>
      </item>
-     <item row="6" column="0">
+     <item>
       <layout class="QHBoxLayout" name="horizontalLayout_6">
        <item>
         <widget class="QLabel" name="label_8">
@@ -630,12 +630,12 @@
           </font>
          </property>
          <property name="text">
-          <string>弹子线1终点:</string>
+          <string>弹子线终点:</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QSpinBox" name="spinBox_pts_vertical1_end_x">
+        <widget class="QSpinBox" name="spinBox_pts_vertical_end_x">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -666,7 +666,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QSpinBox" name="spinBox_pts_vertical1_end_y">
+        <widget class="QSpinBox" name="spinBox_pts_vertical_end_y">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -698,93 +698,8 @@
        </item>
       </layout>
      </item>
-     <item row="7" column="0">
+     <item>
       <layout class="QHBoxLayout" name="horizontalLayout_7">
-       <item>
-        <widget class="QLabel" name="label_6">
-         <property name="minimumSize">
-          <size>
-           <width>60</width>
-           <height>30</height>
-          </size>
-         </property>
-         <property name="font">
-          <font>
-           <family>华文楷体</family>
-           <pointsize>16</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>弹子线2起点:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QSpinBox" name="spinBox_pts_vertical2_start_x">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>1</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>100</width>
-           <height>30</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>100</width>
-           <height>30</height>
-          </size>
-         </property>
-         <property name="font">
-          <font>
-           <family>Arial</family>
-           <pointsize>16</pointsize>
-          </font>
-         </property>
-         <property name="maximum">
-          <number>2048</number>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QSpinBox" name="spinBox_pts_vertical2_start_y">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>1</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>100</width>
-           <height>30</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>100</width>
-           <height>30</height>
-          </size>
-         </property>
-         <property name="font">
-          <font>
-           <family>Arial</family>
-           <pointsize>16</pointsize>
-          </font>
-         </property>
-         <property name="maximum">
-          <number>2048</number>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item row="8" column="0">
-      <layout class="QHBoxLayout" name="horizontalLayout_8">
        <item>
         <widget class="QLabel" name="label_9">
          <property name="minimumSize">
@@ -800,43 +715,12 @@
           </font>
          </property>
          <property name="text">
-          <string>弹子线2终点:</string>
+          <string>弹子线间距:</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QSpinBox" name="spinBox_pts_vertical2_end_x">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>1</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>100</width>
-           <height>30</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>100</width>
-           <height>30</height>
-          </size>
-         </property>
-         <property name="font">
-          <font>
-           <family>Arial</family>
-           <pointsize>16</pointsize>
-          </font>
-         </property>
-         <property name="maximum">
-          <number>2048</number>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QSpinBox" name="spinBox_pts_vertical2_end_y">
+        <widget class="QSpinBox" name="spinBox_pts_vertical_interval">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
            <horstretch>0</horstretch>
