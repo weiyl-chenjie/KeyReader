@@ -12,6 +12,7 @@ from PySide2.QtCore import QTimer, QThread, Signal
 from UI2PY.MainWindow import Ui_MainWindow
 from set_calibration_line import SetCalibrationLine
 from config import Config
+from HslCommunication import SiemensPLCS, SiemensS7Net
 
 
 class Window(QMainWindow):
@@ -40,7 +41,10 @@ class Window(QMainWindow):
         # # 阈值
         # self.min_threshold = int(self.conf.read_config('canny', 'min_threshold'))
         # self.max_threshold = int(self.conf.read_config('canny', 'max_threshold'))
-
+        # 获取PLC的ip
+        self.ip_plc = self.conf.read_config(product=self.product, section='plc', name='ip')
+        # 创建PLC实例
+        self.siemens = SiemensS7Net(siemens=SiemensPLCS.S1200, ipAddress=self.ip_plc)
         self.Ui_MainWindow.comboBox_change_product.addItem('')
         with sqlite3.connect('keyid.db') as conn:
             cur = conn.cursor()
@@ -73,12 +77,19 @@ class Window(QMainWindow):
 
     # 槽函数
     def start(self):
-        self._thread.working = True
-        if not self._thread.cap.isOpened():
-            self._thread.cap.open(0)
-        self._thread.start()
-        self.Ui_MainWindow.label_status.setText('等待钥匙插入')
-        self.Ui_MainWindow.label_status.setStyleSheet('background-color: rgb(255, 255, 127);')
+        self.Ui_MainWindow.label_status.setText('连接PLC...')
+        QApplication.processEvents()
+        if self.siemens.ConnectServer().IsSuccess:  # 若连接成功
+            self._thread.working = True
+            self.Ui_MainWindow.label_status.setText('PLC连接成功')
+            if not self._thread.cap.isOpened():
+                self._thread.cap.open(0)
+            self._thread.start()
+            self.Ui_MainWindow.label_status.setText('等待钥匙插入')
+            self.Ui_MainWindow.label_status.setStyleSheet('background-color: rgb(255, 255, 127);')
+        else:
+            self.Ui_MainWindow.label_status.setText('PLC连接失败')
+            self.Ui_MainWindow.label_status.setStyleSheet('background-color: rgb(255, 0, 0);')
 
     def change_product(self, item):
         self.Ui_MainWindow.label_status.setStyleSheet('background-color: rgb(255, 255, 127);')
@@ -444,7 +455,10 @@ class Window(QMainWindow):
     # 钥匙是否插到位
     def key_is_ready(self):
         if self.key_sensor:  # 如果有钥匙到位传感器
-            pass
+            if self.siemens.ReadBool('I4.5'):  # 读取I4.5，若为True，则返回True
+                return True
+            else:
+                return False
         else:
             # 最底线的纵坐标(双排齿为左侧竖线横坐标)
             if self.row_number == 1:
