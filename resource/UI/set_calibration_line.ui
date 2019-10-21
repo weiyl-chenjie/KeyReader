@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>891</width>
-    <height>705</height>
+    <height>755</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>60</x>
-     <y>470</y>
+     <y>540</y>
      <width>205</width>
      <height>50</height>
     </rect>
@@ -57,7 +57,7 @@
    <property name="geometry">
     <rect>
      <x>60</x>
-     <y>590</y>
+     <y>640</y>
      <width>205</width>
      <height>50</height>
     </rect>
@@ -90,7 +90,7 @@
     <string notr="true">background-color: rgb(85, 170, 0);</string>
    </property>
    <property name="text">
-    <string>确定</string>
+    <string>保存退出</string>
    </property>
   </widget>
   <widget class="QGroupBox" name="groupBox">
@@ -98,8 +98,8 @@
     <rect>
      <x>60</x>
      <y>30</y>
-     <width>391</width>
-     <height>371</height>
+     <width>411</width>
+     <height>481</height>
     </rect>
    </property>
    <property name="font">
@@ -115,9 +115,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>41</y>
-      <width>359</width>
-      <height>307</height>
+      <y>43</y>
+      <width>386</width>
+      <height>424</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -531,7 +531,7 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_5">
        <item>
-        <widget class="QLabel" name="label_5">
+        <widget class="QLabel" name="label_marble_line_start">
          <property name="minimumSize">
           <size>
            <width>60</width>
@@ -545,7 +545,7 @@
           </font>
          </property>
          <property name="text">
-          <string>弹子线起点:</string>
+          <string>左弹子线起点:</string>
          </property>
         </widget>
        </item>
@@ -616,7 +616,7 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_6">
        <item>
-        <widget class="QLabel" name="label_8">
+        <widget class="QLabel" name="label_marble_line_end">
          <property name="minimumSize">
           <size>
            <width>60</width>
@@ -630,7 +630,7 @@
           </font>
          </property>
          <property name="text">
-          <string>弹子线终点:</string>
+          <string>左弹子线终点:</string>
          </property>
         </widget>
        </item>
@@ -699,6 +699,176 @@
       </layout>
      </item>
      <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_10">
+       <item>
+        <widget class="QLabel" name="label_marble_line_start_right">
+         <property name="minimumSize">
+          <size>
+           <width>60</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <family>华文楷体</family>
+           <pointsize>16</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>右弹子线起点:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="spinBox_pts_vertical_start_x_right">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>1</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>100</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>100</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>16</pointsize>
+          </font>
+         </property>
+         <property name="maximum">
+          <number>2048</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="spinBox_pts_vertical_start_y_right">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>1</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>100</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>100</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>16</pointsize>
+          </font>
+         </property>
+         <property name="maximum">
+          <number>2048</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_8">
+       <item>
+        <widget class="QLabel" name="label_marble_line_end_right">
+         <property name="minimumSize">
+          <size>
+           <width>60</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <family>华文楷体</family>
+           <pointsize>16</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>右弹子线终点:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="spinBox_pts_vertical_end_x_right">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>1</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>100</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>100</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>16</pointsize>
+          </font>
+         </property>
+         <property name="maximum">
+          <number>2048</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="spinBox_pts_vertical_end_y_right">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>1</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>100</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>100</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>16</pointsize>
+          </font>
+         </property>
+         <property name="maximum">
+          <number>2048</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
       <layout class="QHBoxLayout" name="horizontalLayout_7">
        <item>
         <widget class="QLabel" name="label_9">
@@ -715,12 +885,66 @@
           </font>
          </property>
          <property name="text">
-          <string>弹子线间距:</string>
+          <string>左弹子线间距:</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QSpinBox" name="spinBox_pts_vertical_interval">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>1</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>100</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>100</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>16</pointsize>
+          </font>
+         </property>
+         <property name="maximum">
+          <number>2048</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_11">
+       <item>
+        <widget class="QLabel" name="label_marble_interval_right">
+         <property name="minimumSize">
+          <size>
+           <width>60</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <family>华文楷体</family>
+           <pointsize>16</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>右弹子线间距:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="spinBox_pts_vertical_interval_right">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -758,7 +982,7 @@
   <widget class="QGroupBox" name="groupBox_2">
    <property name="geometry">
     <rect>
-     <x>470</x>
+     <x>520</x>
      <y>30</y>
      <width>271</width>
      <height>131</height>

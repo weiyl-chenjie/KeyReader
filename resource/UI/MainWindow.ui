@@ -113,7 +113,7 @@
       <x>10</x>
       <y>10</y>
       <width>251</width>
-      <height>241</height>
+      <height>281</height>
      </rect>
     </property>
     <property name="font">
@@ -125,17 +125,17 @@
     <property name="title">
      <string>产品信息</string>
     </property>
-    <widget class="QWidget" name="layoutWidget">
+    <widget class="QWidget" name="">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>40</y>
+       <y>41</y>
        <width>231</width>
-       <height>182</height>
+       <height>225</height>
       </rect>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0">
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
        <layout class="QHBoxLayout" name="horizontalLayout_4">
         <item>
          <widget class="QLabel" name="label_plant">
@@ -171,7 +171,7 @@
         </item>
        </layout>
       </item>
-      <item row="1" column="0">
+      <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
          <widget class="QLabel" name="label_product">
@@ -201,7 +201,7 @@
         </item>
        </layout>
       </item>
-      <item row="2" column="0">
+      <item>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
          <widget class="QLabel" name="label_marble_number">
@@ -225,7 +225,7 @@
         </item>
        </layout>
       </item>
-      <item row="3" column="0">
+      <item>
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
          <widget class="QRadioButton" name="radioButton_single_row">
@@ -244,6 +244,24 @@
           </property>
           <property name="checkable">
            <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <item>
+         <widget class="QLabel" name="label_key_sensor">
+          <property name="text">
+           <string>到位传感器:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="checkBox_key_sensor">
+          <property name="text">
+           <string>有</string>
           </property>
          </widget>
         </item>
@@ -515,6 +533,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>checkBox_key_sensor</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>key_sensor_changed()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>188</x>
+     <y>283</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>278</x>
+     <y>277</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>manual_capture()</slot>
@@ -523,5 +557,6 @@
   <slot>self_calibration()</slot>
   <slot>set_calibration_line()</slot>
   <slot>change_product()</slot>
+  <slot>key_sensor_changed()</slot>
  </slots>
 </ui>

@@ -28,13 +28,15 @@ class Window(QMainWindow):
         self.conf = Config()
 
         # 获取厂家名
-        self.plant = self.conf.read_config('product', 'plant')
+        self.plant = self.conf.read_config('config', 'product', 'plant')
         # 获取产品名
-        self.product = self.conf.read_config('product', 'product')
+        self.product = self.conf.read_config('config', 'product', 'product')
         # 获取弹子数
-        self.marble_number = int(self.conf.read_config('product', 'marble_number'))
+        self.marble_number = int(self.conf.read_config('config', 'product', 'marble_number'))
         # 单排齿还是多排齿
-        self.row_number = int(self.conf.read_config('product', 'row_number'))
+        self.row_number = int(self.conf.read_config('config', 'product', 'row_number'))
+        # 是否有钥匙到位传感器
+        self.key_sensor = self.conf.read_config('config', 'product', 'key_sensor').upper() == 'YES'
         # # 阈值
         # self.min_threshold = int(self.conf.read_config('canny', 'min_threshold'))
         # self.max_threshold = int(self.conf.read_config('canny', 'max_threshold'))
@@ -67,6 +69,7 @@ class Window(QMainWindow):
             self.Ui_MainWindow.radioButton_double_row.setCheckable(True)
             self.Ui_MainWindow.radioButton_double_row.setChecked(True)
             self.Ui_MainWindow.radioButton_single_row.setCheckable(False)
+        self.Ui_MainWindow.checkBox_key_sensor.setChecked(self.key_sensor)
 
     # 槽函数
     def start(self):
@@ -99,11 +102,11 @@ class Window(QMainWindow):
 
             self.setup()
 
-            # 修改config.ini文件
-            self.conf.update_config(section='product', name='plant', value=self.plant)
-            self.conf.update_config(section='product', name='product', value=self.product)
-            self.conf.update_config(section='product', name='marble_number', value=str(self.marble_number))
-            self.conf.update_config(section='product', name='row_number', value=str(self.row_number))
+            # 修改对应的.ini文件
+            self.conf.update_config(product=self.product, section='product', name='plant', value=self.plant)
+            self.conf.update_config(product=self.product, section='product', name='product', value=self.product)
+            self.conf.update_config(product=self.product, section='product', name='marble_number', value=str(self.marble_number))
+            self.conf.update_config(product=self.product, section='product', name='row_number', value=str(self.row_number))
 
     def manual_adjustment_parameters(self):
         pass
@@ -114,20 +117,30 @@ class Window(QMainWindow):
         step = 1
         while step < 5:
             self.Ui_MainWindow.label_status.setText('自动校准：请插入%s号钥匙' % step)
-            if self.ke_is_ready():  # 如果感应到钥匙插入
+            if self.key_is_ready():  # 如果感应到钥匙插入
                 res, frame = self._thread.cap.read()
                 img = QImage(frame, frame.shape[1], frame.shape[0], QImage.Format_RGB888)
                 self.Ui_MainWindow.label_show_image.setPixmap(QPixmap.fromImage(img))
                 keyid = self.edge_detect(self_calibration=True)
                 if step == 1:
-                    self.conf.update_config(section='key', name='one', value=str(keyid))
+                    one = keyid
+                    self.conf.update_config(product=self.product, section='key', name='one', value=str(keyid))
                 elif step == 2:
-                    self.conf.update_config(section='key', name='two', value=str(keyid))
+                    two = keyid
+                    self.conf.update_config(product=self.product, section='key', name='two', value=str(keyid))
                 if step == 3:
-                    self.conf.update_config(section='key', name='three', value=str(keyid))
+                    three = keyid
+                    self.conf.update_config(product=self.product, section='key', name='three', value=str(keyid))
                 if step == 4:
-                    self.conf.update_config(section='key', name='four', value=str(keyid))
+                    four = keyid
+                    self.conf.update_config(product=self.product, section='key', name='four', value=str(keyid))
                 step += 1
+        if self.row_number == 1:
+            tolerance = abs(int((one - four)/6))
+        elif self.row_number == 2:
+            tolerance = tuple((int(abs(i - j)/6) for i, j in zip(one, four)))
+        self.conf.update_config(product=self.product, section='key', name='tolerance', value=str(tolerance))
+
         self.Ui_MainWindow.label_status.setText('校准结束，点击开始进行工作')
 
     def set_calibration_line(self):
@@ -154,6 +167,12 @@ class Window(QMainWindow):
         cv.waitKey()
         cv.destroyAllWindows()
 
+    def key_sensor_changed(self, evt):
+        if evt:  # 如果选择了钥匙到位传感器
+            self.conf.update_config(product=self.product, section='product', name='key_sensor', value='YES')
+        else:  # 如果取消了钥匙到位传感器
+            self.conf.update_config(product=self.product, section='product', name='key_sensor', value='NO')
+
     # 自定义函数
     # 边缘检测
     def edge_detect(self, self_calibration=False, check_key_is_ready=False, is_capture=False):
@@ -163,38 +182,196 @@ class Window(QMainWindow):
             _, original_img = self._thread.cap.read()
         original_img = cv.flip(original_img, 1)  # 水平翻转
         original_img = cv.imread("key.jpg")
+        # 阈值
+        min_threshold = int(self.conf.read_config(product=self.product, section='canny', name='min_threshold'))
+        max_threshold = int(self.conf.read_config(product=self.product, section='canny', name='max_threshold'))
+        # Canny(): 边缘检测
+        # 得到原始图片的边缘
+        img1 = cv.GaussianBlur(original_img, (3, 3), 0)
+        canny_original_img = cv.Canny(img1, min_threshold, max_threshold)
         # 画线的粗细和类型
-        thickness = int(self.conf.read_config('line', 'thickness'))
-        lineType = int(self.conf.read_config('line', 'lineType'))
-        # 底线起点和终点的坐标
-        ptStart_bottom = eval(self.conf.read_config('line', 'ptStart_bottom'))
-        ptEnd_bottom = eval(self.conf.read_config('line', 'ptEnd_bottom'))
-        point_color_bottom = eval(self.conf.read_config('line', 'point_color_bottom'))  # BGR
+        thickness = int(self.conf.read_config(product=self.product, section='line', name='thickness'))
+        lineType = int(self.conf.read_config(product=self.product, section='line', name='lineType'))
+        # 底线起点和终点的坐标(双排齿的右边竖线)
+        ptStart_bottom = eval(self.conf.read_config(product=self.product, section='line', name='ptStart_bottom'))
+        ptEnd_bottom = eval(self.conf.read_config(product=self.product, section='line', name='ptEnd_bottom'))
+        point_color_bottom = eval(self.conf.read_config(product=self.product, section='line', name='point_color_bottom'))  # BGR
         cv.line(original_img, ptStart_bottom, ptEnd_bottom, point_color_bottom, thickness, lineType)
 
-        # 顶线起点和终点的坐标
-        ptStart_top = eval(self.conf.read_config('line', 'ptStart_top'))
-        ptEnd_top = eval(self.conf.read_config('line', 'ptEnd_top'))
-        point_color_top = eval(self.conf.read_config('line', 'point_color_top'))  # BGR
+        # 顶线起点和终点的坐标(双排齿的左边竖线)
+        ptStart_top = eval(self.conf.read_config(product=self.product, section='line', name='ptStart_top'))
+        ptEnd_top = eval(self.conf.read_config(product=self.product, section='line', name='ptEnd_top'))
+        point_color_top = eval(self.conf.read_config(product=self.product, section='line', name='point_color_top'))  # BGR
         cv.line(original_img, ptStart_top, ptEnd_top, point_color_top, thickness, lineType)
 
-        # 竖线（对准弹子）
-        pts_vertical = eval(self.conf.read_config('line', 'pts_vertical'))
-        pts_vertical_interval = int(self.conf.read_config('line', 'pts_vertical_interval'))
-        for i in range(self.marble_number):
-            if i < 1:
-                continue
-            pts_vertical.append(
-                [(pts_vertical[0][0][0] + pts_vertical_interval * i, pts_vertical[0][0][1]),
-                 (pts_vertical[0][1][0] + pts_vertical_interval * i, pts_vertical[0][1][1])])
-        point_color_vertical = (255, 0, 0)  # BGR
-        for pt in pts_vertical:
-            cv.line(original_img, pt[0], pt[1], point_color_vertical, thickness, lineType)
+        # 竖线,对准弹子(双排齿为横线)
+        if self.row_number == 1:  # 如果为单排齿
+            pts_vertical = eval(self.conf.read_config(product=self.product, section='line', name='pts_vertical'))
+            pts_vertical_interval = int(self.conf.read_config(product=self.product, section='line', name='pts_vertical_interval'))
+            for i in range(self.marble_number):
+                if i < 1:
+                    continue
+                pts_vertical.append(
+                    [(pts_vertical[0][0][0] + pts_vertical_interval * i, pts_vertical[0][0][1]),
+                     (pts_vertical[0][1][0] + pts_vertical_interval * i, pts_vertical[0][1][1])])
+            point_color_vertical = (255, 0, 0)  # BGR
+            for pt in pts_vertical:
+                cv.line(original_img, pt[0], pt[1], point_color_vertical, thickness, lineType)
 
-        # 阈值
-        min_threshold = int(self.conf.read_config('canny', 'min_threshold'))
-        max_threshold = int(self.conf.read_config('canny', 'max_threshold'))
+            if self_calibration:  # 如果是自动校准
+                keyid = 0
+                for pt in pts_vertical:
+                    for i in range(ptStart_top[1] + 2, ptStart_bottom[1]):
+                        if canny_original_img[i][pt[0][0]] == 255:
+                            keyid += ptStart_bottom[1] - i
+                            break
+                keyid = int(keyid / self.marble_number)
+                cv.line(original_img, (ptStart_top[0], keyid), (ptEnd_top[0], keyid), point_color_top, thickness,
+                        lineType)
+                img = QImage(original_img, original_img.shape[1], original_img.shape[0], QImage.Format_RGB888)
+            elif check_key_is_ready:  # 如果要判断钥匙是否已到位
+                keyid = 0
+                for i in range(ptStart_top[1] + 2, ptStart_bottom[1]):
+                    if canny_original_img[i][pts_vertical[0][0][0]] == 255:
+                        keyid = i
+                        break
+            elif is_capture:  # 检测keyid
+                one = int(self.conf.read_config(product=self.product, section='key', name='one'))
+                two = int(self.conf.read_config(product=self.product, section='key', name='two'))
+                three = int(self.conf.read_config(product=self.product, section='key', name='three'))
+                four = int(self.conf.read_config(product=self.product, section='key', name='four'))
+                # 画4条标准线(双排齿画8条)
+                cv.line(original_img, (ptStart_top[0], one), (ptEnd_top[0], one), point_color_top, thickness, lineType)
+                cv.line(original_img, (ptStart_top[0], two), (ptEnd_top[0], two), point_color_top, thickness, lineType)
+                cv.line(original_img, (ptStart_top[0], three), (ptEnd_top[0], three), point_color_top, thickness,
+                        lineType)
+                cv.line(original_img, (ptStart_top[0], four), (ptEnd_top[0], four), point_color_top, thickness,
+                        lineType)
+                img = QImage(original_img, original_img.shape[1], original_img.shape[0], QImage.Format_RGB888)
 
+                keyid = ''
+                for pt in pts_vertical:
+                    for i in range(ptStart_top[1] + 2, ptStart_bottom[1]):
+                        if canny_original_img[i][pt[0][0]] == 255:
+                            keyid += self.get_keyid((ptStart_bottom[1] - i))
+                            break
+                        elif i >= ptStart_bottom[1] - 1:
+                            keyid += 'X'
+        elif self.row_number == 2:  # 如果为双排齿
+            # 获取pts_vertical格式为：[[[(x1, y1), (x2, y2)]], [[(x3, y3), (x4, y4)]]]
+            pts_vertical = eval(self.conf.read_config(product=self.product, section='line', name='pts_vertical'))
+            # 双排齿，弹子线分左边和右边
+            pts_vertical_left, pts_vertical_right = pts_vertical
+            # 获取弹子间隔,分为左右两部分。pts_vertical_interval的格式为：(number1, number2)
+            pts_vertical_left_interval, pts_vertical_right_interval = eval(
+                self.conf.read_config(product=self.product, section='line', name='pts_vertical_interval'))
+            for i in range(int(self.marble_number/2)):
+                if i < 1:
+                    continue
+                # 获得左边4条线（横坐标一样，纵坐标固定间隔）
+                pts_vertical_left.append(
+                    [(pts_vertical_left[0][0][0], pts_vertical_left[0][0][1] + pts_vertical_left_interval * i),
+                     (pts_vertical_left[0][1][0], pts_vertical_left[0][1][1] + pts_vertical_left_interval * i)])
+                # 获得右边4条线（横坐标一样，纵坐标固定间隔）
+                pts_vertical_right.append(
+                    [(pts_vertical_right[0][0][0], pts_vertical_right[0][0][1] + pts_vertical_right_interval * i),
+                     (pts_vertical_right[0][1][0], pts_vertical_right[0][1][1] + pts_vertical_right_interval * i)])
+            point_color_vertical = (255, 0, 0)  # BGR
+            for pt in pts_vertical_left:
+                cv.line(original_img, pt[0], pt[1], point_color_vertical, thickness, lineType)
+            for pt in pts_vertical_right:
+                cv.line(original_img, pt[0], pt[1], point_color_vertical, thickness, lineType)
+
+            if self_calibration:  # 如果是自动校准
+                keyid_left = 0
+                keyid_right = 0
+                # 左边
+                for pt in pts_vertical_left:
+                    for i in range(2, ptStart_top[0]):
+                        if canny_original_img[pt[0][1]][i] == 255:
+                            keyid_left += ptStart_top[0] - i
+                            break
+                keyid_left = int(keyid_left / self.marble_number)
+                cv.line(original_img, (keyid_left, ptStart_top[1]), (keyid_left, ptEnd_top[1]), point_color_top, thickness,
+                        lineType)
+
+                # 右边
+                for pt in pts_vertical_right:
+                    for i in range(ptStart_bottom[0]+2, len(canny_original_img[0])):
+                        if canny_original_img[pt[0][1]][i] == 255:
+                            keyid_right += i - ptStart_bottom[0]
+                            break
+                keyid_right = int(keyid_right / self.marble_number)
+                cv.line(original_img, (keyid_right, ptStart_bottom[1]), (keyid_right, ptEnd_bottom[1]), point_color_top, thickness,
+                        lineType)
+                img = QImage(original_img, original_img.shape[1], original_img.shape[0], QImage.Format_RGB888)
+                keyid = (keyid_left, keyid_right)
+            elif check_key_is_ready:  # 如果要判断钥匙是否已到位
+                keyid = 0
+                for i in range(2, ptStart_top[0]):
+                    if canny_original_img[pts_vertical[0][0][1]][i] == 255:
+                        keyid = i
+                        break
+
+            elif is_capture:  # 检测keyid
+                one = eval(self.conf.read_config(product=self.product, section='key', name='one'))
+                two = eval(self.conf.read_config(product=self.product, section='key', name='two'))
+                three = eval(self.conf.read_config(product=self.product, section='key', name='three'))
+                four = eval(self.conf.read_config(product=self.product, section='key', name='four'))
+                # 画4条标准线(双排齿画8条)
+                # 左边4条线
+                cv.line(original_img, (abs(ptStart_top[0] - one[0]), ptStart_top[1]),
+                        (abs(ptEnd_top[0] - one[0]), ptEnd_top[1]), point_color_top, thickness, lineType)
+                cv.line(original_img, (abs(ptStart_top[0] - two[0]), ptStart_top[1]),
+                        (abs(ptEnd_top[0] - two[0]), ptEnd_top[1]), point_color_top, thickness, lineType)
+                cv.line(original_img, (abs(ptStart_top[0] - three[0]), ptStart_top[1]),
+                        (abs(ptEnd_top[0] - three[0]), ptEnd_top[1]), point_color_top, thickness, lineType)
+                cv.line(original_img, (abs(ptStart_top[0] - four[0]), ptStart_top[1]),
+                        (abs(ptEnd_top[0] - four[0]), ptEnd_top[1]), point_color_top, thickness, lineType)
+                # 右边4条线
+                cv.line(original_img, (one[1] + ptStart_bottom[0], ptStart_bottom[1]),
+                        (one[1] + ptEnd_bottom[0], ptEnd_bottom[1]), point_color_top, thickness, lineType)
+                cv.line(original_img, (two[1] + ptStart_bottom[0], ptStart_bottom[1]),
+                        (two[1] + ptEnd_bottom[0], ptEnd_bottom[1]), point_color_top, thickness, lineType)
+                cv.line(original_img, (three[1] + ptStart_bottom[0], ptStart_bottom[1]),
+                        (three[1] + ptEnd_bottom[0], ptEnd_bottom[1]), point_color_top, thickness, lineType)
+                cv.line(original_img, (four[1] + ptStart_bottom[0], ptStart_bottom[1]),
+                        (four[1] + ptEnd_bottom[0], ptEnd_bottom[1]), point_color_top, thickness, lineType)
+                img = QImage(original_img, original_img.shape[1], original_img.shape[0], QImage.Format_RGB888)
+
+                keyid_left = ''
+                keyid_right = ''
+                key_left = []
+                key_right = []
+                for pt in pts_vertical_left:
+                    # x轴的起始坐标
+                    # print(ptStart_bottom)
+                    for i in range(2, ptStart_top[0]):
+                        if canny_original_img[pt[0][1]][i] == 255:
+                            keyid_left += self.get_keyid(abs(pt[1][0] - i), left=True)
+                            key_left.append(pt[1][0] - i)
+                            break
+                        elif i >= pt[1][0] - 1:
+                            keyid_left += 'X'
+                            key_left.append(i)
+                for pt in pts_vertical_right:
+                    # x轴的起始坐标
+                    # print(pt[0][0], pt[1][0])
+                    for i in range(ptStart_bottom[0] + 2, len(canny_original_img[0])):
+                        if canny_original_img[pt[0][1]][i] == 255:
+                            keyid_right += self.get_keyid(abs(i - ptStart_bottom[0]), right=True)
+                            key_right.append(i - ptStart_bottom[0])
+                            break
+                        elif i >= pt[1][0] - 1:
+                            keyid_left += 'X'
+                            key_right.append(i)
+                res = [''] * len(keyid_left) * 2
+                print(key_right, key_left)
+                print(keyid_right, keyid_left)
+                res[::2] = keyid_right
+                res[1::2] = keyid_left
+                print(res)
+                keyid = ''.join(res)
         # 形态学：边缘检测
         # _, Thr_img = cv.threshold(original_img, 210, 255, cv.THRESH_BINARY)  # 设定红色通道阈值210（阈值影响梯度运算效果）
         # kernel = cv.getStructuringElement(cv.MORPH_RECT, (5, 5))  # 定义矩形结构元素
@@ -202,64 +379,34 @@ class Window(QMainWindow):
         # cv.imshow("original_img", original_img)
         # cv.imshow("gradient", gradient)
         # cv.imshow('Canny', canny)
-        if self_calibration:  # 如果是自动校准
-            # canny(): 边缘检测
-            img1 = cv.GaussianBlur(original_img, (3, 3), 0)
-            canny = cv.Canny(img1, min_threshold, max_threshold)
-            keyid = 0
-            for pt in pts_vertical:
-                for i in range(ptStart_top[1] + 2, ptStart_bottom[1]):
-                    if canny[i][pt[0][0]] == 255:
-                        keyid += i
-                        break
-            keyid = int(keyid/self.marble_number)
-            cv.line(original_img, (ptStart_top[0], keyid), (ptEnd_top[0], keyid), point_color_top, thickness, lineType)
-            img = QImage(original_img, original_img.shape[1], original_img.shape[0], QImage.Format_RGB888)
-        elif check_key_is_ready:  # 如果要怕段钥匙是否已到位
-            # canny(): 边缘检测
-            img1 = cv.GaussianBlur(original_img, (3, 3), 0)
-            canny = cv.Canny(img1, min_threshold, max_threshold)
-            keyid = 0
-            for i in range(ptStart_top[1] + 2, ptStart_bottom[1]):
-                if canny[i][pts_vertical[0][0][0]] == 255:
-                    keyid = i
-                    break
-        
-        elif is_capture:  # 检测keyid
-            one = int(self.conf.read_config('key', 'one'))
-            two = int(self.conf.read_config('key', 'two'))
-            three = int(self.conf.read_config('key', 'three'))
-            four = int(self.conf.read_config('key', 'four'))
-            # 画4条标准线
-            cv.line(original_img, (ptStart_top[0], one), (ptEnd_top[0], one), point_color_top, thickness, lineType)
-            cv.line(original_img, (ptStart_top[0], two), (ptEnd_top[0], two), point_color_top, thickness, lineType)
-            cv.line(original_img, (ptStart_top[0], three), (ptEnd_top[0], three), point_color_top, thickness, lineType)
-            cv.line(original_img, (ptStart_top[0], four), (ptEnd_top[0], four), point_color_top, thickness, lineType)
-            img = QImage(original_img, original_img.shape[1], original_img.shape[0], QImage.Format_RGB888)
 
-            # canny(): 边缘检测
-            img1 = cv.GaussianBlur(original_img, (3, 3), 0)
-            canny = cv.Canny(img1, min_threshold, max_threshold)
-
-            keyid = ''
-            for pt in pts_vertical:
-                for i in range(ptStart_top[1] + 2, ptStart_bottom[1]):
-                    if canny[i][pt[0][0]] == 255:
-                        keyid += self.get_keyid(i)
-                        break
-                    elif i >= ptStart_bottom[1]-1:
-                        keyid += 'X'
+        # Canny(): 边缘检测
+        img1 = cv.GaussianBlur(original_img, (3, 3), 0)
+        canny_to_show = cv.Canny(img1, min_threshold, max_threshold)
 
         self.Ui_MainWindow.label_show_image.setPixmap(QPixmap.fromImage(img))
-        return keyid, canny
+        return keyid, canny_to_show
 
     # 获取keyid
-    def get_keyid(self, key):
-        one = int(self.conf.read_config('key', 'one'))
-        two = int(self.conf.read_config('key', 'two'))
-        three = int(self.conf.read_config('key', 'three'))
-        four = int(self.conf.read_config('key', 'four'))
-        tolerance = int(self.conf.read_config('key', 'tolerance'))
+    def get_keyid(self, key, left=False, right=False):
+        if left:
+            one = eval(self.conf.read_config(product=self.product, section='key', name='one'))[0]
+            two = eval(self.conf.read_config(product=self.product, section='key', name='two'))[0]
+            three = eval(self.conf.read_config(product=self.product, section='key', name='three'))[0]
+            four = eval(self.conf.read_config(product=self.product, section='key', name='four'))[0]
+            tolerance = eval(self.conf.read_config(product=self.product, section='key', name='tolerance'))[0]
+        elif right:
+            one = eval(self.conf.read_config(product=self.product, section='key', name='one'))[1]
+            two = eval(self.conf.read_config(product=self.product, section='key', name='two'))[1]
+            three = eval(self.conf.read_config(product=self.product, section='key', name='three'))[1]
+            four = eval(self.conf.read_config(product=self.product, section='key', name='four'))[1]
+            tolerance = eval(self.conf.read_config(product=self.product, section='key', name='tolerance'))[1]
+        else:
+            one = int(self.conf.read_config(product=self.product, section='key', name='one'))
+            two = int(self.conf.read_config(product=self.product, section='key', name='two'))
+            three = int(self.conf.read_config(product=self.product, section='key', name='three'))
+            four = int(self.conf.read_config(product=self.product, section='key', name='four'))
+            tolerance = int(self.conf.read_config(product=self.product, section='key', name='tolerance'))
         if one - tolerance < key < one + tolerance:
             return '1'
         elif two - tolerance < key < two + tolerance:
@@ -296,14 +443,20 @@ class Window(QMainWindow):
 
     # 钥匙是否插到位
     def key_is_ready(self):
-        # 最底线的纵坐标
-        line_bottom_y = eval(self.conf.read_config('line', 'ptstart_bottom'))
-        keyid = self.edge_detect(is_capture=True)
-        # 如果边缘在底线上方，则表明有钥匙进入
-        if keyid < line_bottom_y:
-            return True
+        if self.key_sensor:  # 如果有钥匙到位传感器
+            pass
         else:
-            return False
+            # 最底线的纵坐标(双排齿为左侧竖线横坐标)
+            if self.row_number == 1:
+                base_line = eval(self.conf.read_config('line', 'ptstart_bottom'))[1]
+            elif self.row_number == 2:
+                base_line = eval(self.conf.read_config('line', 'ptstart_top'))[0]
+            keyid = self.edge_detect(check_key_is_ready=True)
+            # 如果边缘超过基准线，则表明有钥匙进入
+            if keyid < base_line:
+                return True
+            else:
+                return False
 
 
 class VideoThread(QThread):
