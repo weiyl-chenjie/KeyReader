@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1594</width>
+    <width>1600</width>
     <height>1012</height>
    </rect>
   </property>
@@ -125,7 +125,7 @@
     <property name="title">
      <string>产品信息</string>
     </property>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -422,13 +422,85 @@
      </item>
     </layout>
    </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>750</y>
+      <width>245</width>
+      <height>96</height>
+     </rect>
+    </property>
+    <layout class="QFormLayout" name="formLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="font">
+        <font>
+         <family>华文楷体</family>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>PLC的IP:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="lineEdit_IP_PLC">
+       <property name="text">
+        <string>192.168.0.255</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QPushButton" name="pushButton_change_ip">
+       <property name="font">
+        <font>
+         <family>华文楷体</family>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1.2, y2:0, stop:0 rgba(0, 0, 0, 255), stop:1 rgba(255, 255, 255, 255));
+color: rgb(200, 194, 15);</string>
+       </property>
+       <property name="text">
+        <string>设置为当前值</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QPushButton" name="pushButton_plc_connect_test">
+       <property name="font">
+        <font>
+         <family>华文楷体</family>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1.2, y2:0, stop:0 rgba(0, 0, 0, 255), stop:1 rgba(255, 255, 255, 255));
+color: rgb(200, 194, 15);</string>
+       </property>
+       <property name="text">
+        <string>测试连接</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1594</width>
+     <width>1600</width>
      <height>26</height>
     </rect>
    </property>
@@ -549,6 +621,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>pushButton_change_ip</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>change_ip_plc()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>119</x>
+     <y>817</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>13</x>
+     <y>820</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_plc_connect_test</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>plc_connect_test()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>101</x>
+     <y>853</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>45</x>
+     <y>857</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>manual_capture()</slot>
@@ -558,5 +662,7 @@
   <slot>set_calibration_line()</slot>
   <slot>change_product()</slot>
   <slot>key_sensor_changed()</slot>
+  <slot>change_ip_plc()</slot>
+  <slot>plc_connect_test()</slot>
  </slots>
 </ui>

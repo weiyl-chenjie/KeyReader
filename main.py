@@ -1,4 +1,5 @@
 # python自带库
+import os
 import sys
 from time import sleep
 import sqlite3
@@ -15,9 +16,9 @@ from config import Config
 from HslCommunication import SiemensPLCS, SiemensS7Net
 
 
-class Window(QMainWindow):
+class MyWindow(QMainWindow):
     def __init__(self):
-        super(Window, self).__init__()
+        super(MyWindow, self).__init__()
         self.Ui_MainWindow = Ui_MainWindow()
         self.Ui_MainWindow.setupUi(self)
 
@@ -62,8 +63,11 @@ class Window(QMainWindow):
 
     def setup(self):
         # 设置控件值
+        # 工厂
         self.Ui_MainWindow.lineEdit_plant.setText(self.plant)
+        # 产品
         self.Ui_MainWindow.lineEdit_product.setText(self.product)
+        # 弹子数
         self.Ui_MainWindow.lineEdit_marble_number.setText(str(self.marble_number))
         if self.row_number == 1:
             self.Ui_MainWindow.radioButton_single_row.setCheckable(True)
@@ -73,7 +77,10 @@ class Window(QMainWindow):
             self.Ui_MainWindow.radioButton_double_row.setCheckable(True)
             self.Ui_MainWindow.radioButton_double_row.setChecked(True)
             self.Ui_MainWindow.radioButton_single_row.setCheckable(False)
+        # 是否有钥匙到位传感器
         self.Ui_MainWindow.checkBox_key_sensor.setChecked(self.key_sensor)
+        # PLC的ip
+        self.Ui_MainWindow.lineEdit_IP_PLC.setText(self.ip_plc)
 
     # 槽函数
     def start(self):
@@ -120,7 +127,7 @@ class Window(QMainWindow):
             self.conf.update_config(product=self.product, section='product', name='row_number', value=str(self.row_number))
 
     def manual_adjustment_parameters(self):
-        pass
+        os.startfile(self.product+'.ini')
 
     def self_calibration(self):
         # 暂停读取摄像头进程，并释放摄像头
@@ -183,6 +190,20 @@ class Window(QMainWindow):
             self.conf.update_config(product=self.product, section='product', name='key_sensor', value='YES')
         else:  # 如果取消了钥匙到位传感器
             self.conf.update_config(product=self.product, section='product', name='key_sensor', value='NO')
+
+    def change_ip_plc(self):
+        ip = self.Ui_MainWindow.lineEdit_IP_PLC.text()
+        self.conf.update_config(product=self.product, section='plc', name='ip', value=ip)
+
+    def plc_connect_test(self):
+        self.Ui_MainWindow.label_status.setText('正在连接PLC...请稍后')
+        QApplication.processEvents()
+        if self.siemens.ConnectServer().IsSuccess:  # 若连接成功
+            self.Ui_MainWindow.label_status.setText('成功连接PLC')
+            self.Ui_MainWindow.label_status.setStyleSheet('background-color: rgb(0, 255, 0);')
+        else:
+            self.Ui_MainWindow.label_status.setText('PLC连接失败！')
+            self.Ui_MainWindow.label_status.setStyleSheet('background-color: rgb(255, 0, 0);')
 
     # 自定义函数
     # 边缘检测
@@ -520,8 +541,8 @@ class VideoThread(QThread):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    demo = Window()
-    demo.show()
+    window = MyWindow()
+    window.showMaximized()
     sys.exit(app.exec_())
 
 

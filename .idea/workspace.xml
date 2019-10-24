@@ -3,7 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="7d8661f2-5671-4937-849f-fcdd3ba22455" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UI2PY/MainWindow.py" beforeDir="false" afterPath="$PROJECT_DIR$/UI2PY/MainWindow.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resource/UI/MainWindow.ui" beforeDir="false" afterPath="$PROJECT_DIR$/resource/UI/MainWindow.ui" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -46,10 +48,34 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2031">
-              <caret line="319" column="35" selection-start-line="319" selection-start-column="23" selection-end-line="319" selection-end-column="35" />
+            <state relative-caret-position="190">
+              <caret line="545" column="25" lean-forward="true" selection-start-line="545" selection-start-column="25" selection-end-line="545" selection-end-column="25" />
               <folding>
-                <element signature="e#12#22#0" expanded="true" />
+                <element signature="e#482#24900#0" />
+                <element signature="e#510#2382#0" />
+                <element signature="e#2423#3334#0" />
+                <element signature="e#3251#3957#0" />
+                <element signature="e#3412#3785#0" />
+                <element signature="e#3812#3957#0" />
+                <element signature="e#4003#5456#0" />
+                <element signature="e#4132#5456#0" />
+                <element signature="e#5520#5534#0" />
+                <element signature="e#5556#7166#0" />
+                <element signature="e#5794#6796#0" />
+                <element signature="e#6121#6243#0" />
+                <element signature="e#6296#6418#0" />
+                <element signature="e#6469#6595#0" />
+                <element signature="e#6646#6770#0" />
+                <element signature="e#7212#7321#0" />
+                <element signature="e#7357#7683#0" />
+                <element signature="e#7723#8019#0" />
+                <element signature="e#8068#8338#0" />
+                <element signature="e#8558#8638#0" />
+                <element signature="e#8736#9180#0" />
+                <element signature="e#8344#8351#0" />
+                <element signature="e#8466#21319#0" />
+                <element signature="e#24935#26201#0" />
+                <element signature="e#26235#26325#0" />
               </folding>
             </state>
           </provider>
@@ -67,7 +93,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/set_calibration_line.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2223">
+            <state relative-caret-position="386">
               <caret line="123" column="33" selection-start-line="123" selection-start-column="33" selection-end-line="123" selection-end-column="33" />
               <folding>
                 <element signature="e#12#22#0" expanded="true" />
@@ -79,7 +105,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/280B.ini">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="570">
+            <state relative-caret-position="342">
               <caret line="30" selection-start-line="30" selection-end-line="30" />
             </state>
           </provider>
@@ -88,7 +114,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/281B.ini">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="570">
+            <state relative-caret-position="310">
               <caret line="30" selection-start-line="30" selection-end-line="30" />
             </state>
           </provider>
@@ -137,8 +163,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>change</find>
-      <find>code</find>
       <find>'</find>
       <find>outText</find>
       <find>run</find>
@@ -152,7 +176,6 @@
       <find>pts_vertical_interval</find>
       <find>pts_vertical</find>
       <find>background</find>
-      <find>setStyleSheet</find>
       <find>with</find>
       <find>filename=</find>
       <find>filename=self.filename</find>
@@ -167,6 +190,9 @@
       <find>def self</find>
       <find>pts_vertical_left</find>
       <find>Shee</find>
+      <find>key_is_ready</find>
+      <find>ConnectServer</find>
+      <find>setStyleSheet</find>
     </findStrings>
     <replaceStrings>
       <replace>product=</replace>
@@ -199,8 +225,7 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="35" />
-    <option name="y" value="-9" />
+    <option name="x" value="487" />
     <option name="width" value="1790" />
     <option name="height" value="1040" />
   </component>
@@ -268,16 +293,16 @@
     <property name="settings.editor.selected.configurable" value="settings.github" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="D:\programme\Python\virtualenvs\KeyReader\KeyReader" />
-      <recent name="D:\programme\Python\virtualenvs\KeyReader\code\UI2PY" />
-      <recent name="D:\programme\Python\virtualenvs\KeyReader\code" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\programme\Python\virtualenvs\KeyReader\KeyReader\UI2PY" />
       <recent name="D:\programme\Python\virtualenvs\KeyReader\code\UI2PY" />
       <recent name="D:\programme\Python\virtualenvs\KeyReader\code" />
       <recent name="D:\programme\Python\virtualenvs\KeyReader\code\resource" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\programme\Python\virtualenvs\KeyReader\KeyReader" />
+      <recent name="D:\programme\Python\virtualenvs\KeyReader\code\UI2PY" />
+      <recent name="D:\programme\Python\virtualenvs\KeyReader\code" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -408,7 +433,7 @@
       <workItem from="1570846681718" duration="17899000" />
       <workItem from="1571011280149" duration="2580000" />
       <workItem from="1571121896766" duration="54605000" />
-      <workItem from="1571701861474" duration="329000" />
+      <workItem from="1571701861474" duration="2987000" />
     </task>
     <task id="LOCAL-00001" summary="初步完成">
       <created>1570846929192</created>
@@ -473,11 +498,18 @@
       <option name="project" value="LOCAL" />
       <updated>1571645951810</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="增加PLC通讯">
+      <created>1571702222255</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1571702222255</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="143651000" />
+    <option name="totallyTimeSpent" value="146309000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
@@ -488,7 +520,7 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3286119" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49932975" weight="0.32719547" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49932975" weight="0.3286119" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39886847" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -497,7 +529,7 @@
       <window_info anchor="bottom" id="Version Control" order="8" />
       <window_info anchor="bottom" id="Database Changes" order="9" />
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.50067025" side_tool="true" weight="0.32719547" />
-      <window_info anchor="bottom" id="Terminal" order="11" weight="0.32719547" />
+      <window_info anchor="bottom" id="Terminal" order="11" weight="0.3243626" />
       <window_info anchor="bottom" id="Python Console" order="12" />
       <window_info anchor="bottom" id="Database Console" order="13" weight="0.32956153" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -522,7 +554,7 @@
     <SUITE FILE_PATH="coverage/code$MainWindow.coverage" NAME="MainWindow Coverage Results" MODIFIED="1570845379452" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/UI2PY" />
     <SUITE FILE_PATH="coverage/code$config.coverage" NAME="config Coverage Results" MODIFIED="1570780735437" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/code$set_calibration_line.coverage" NAME="set_calibration_line Coverage Results" MODIFIED="1570844838723" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/KeyReader$main.coverage" NAME="main Coverage Results" MODIFIED="1571647679426" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/KeyReader$main.coverage" NAME="main Coverage Results" MODIFIED="1571710733925" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="editorHistoryManager">
     <entry file="das://0f59b6d4-c5e9-4e11-8a7a-513943152c7a/schema/main/table/sqlite_master">
@@ -621,44 +653,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2031">
-          <caret line="319" column="35" selection-start-line="319" selection-start-column="23" selection-end-line="319" selection-end-column="35" />
-          <folding>
-            <element signature="e#12#22#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/双排齿说明.ini">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="912">
           <caret line="48" selection-start-line="48" selection-end-line="50" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/set_calibration_line.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2223">
-          <caret line="123" column="33" selection-start-line="123" selection-start-column="33" selection-end-line="123" selection-end-column="33" />
-          <folding>
-            <element signature="e#12#22#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/280B.ini">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="570">
-          <caret line="30" selection-start-line="30" selection-end-line="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/281B.ini">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="570">
-          <caret line="30" selection-start-line="30" selection-end-line="30" />
         </state>
       </provider>
     </entry>
@@ -683,6 +681,64 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="551">
           <caret line="29" selection-start-line="29" selection-end-line="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/set_calibration_line.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="386">
+          <caret line="123" column="33" selection-start-line="123" selection-start-column="33" selection-end-line="123" selection-end-column="33" />
+          <folding>
+            <element signature="e#12#22#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/281B.ini">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="310">
+          <caret line="30" selection-start-line="30" selection-end-line="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/280B.ini">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="342">
+          <caret line="30" selection-start-line="30" selection-end-line="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="190">
+          <caret line="545" column="25" lean-forward="true" selection-start-line="545" selection-start-column="25" selection-end-line="545" selection-end-column="25" />
+          <folding>
+            <element signature="e#482#24900#0" />
+            <element signature="e#510#2382#0" />
+            <element signature="e#2423#3334#0" />
+            <element signature="e#3251#3957#0" />
+            <element signature="e#3412#3785#0" />
+            <element signature="e#3812#3957#0" />
+            <element signature="e#4003#5456#0" />
+            <element signature="e#4132#5456#0" />
+            <element signature="e#5520#5534#0" />
+            <element signature="e#5556#7166#0" />
+            <element signature="e#5794#6796#0" />
+            <element signature="e#6121#6243#0" />
+            <element signature="e#6296#6418#0" />
+            <element signature="e#6469#6595#0" />
+            <element signature="e#6646#6770#0" />
+            <element signature="e#7212#7321#0" />
+            <element signature="e#7357#7683#0" />
+            <element signature="e#7723#8019#0" />
+            <element signature="e#8068#8338#0" />
+            <element signature="e#8558#8638#0" />
+            <element signature="e#8736#9180#0" />
+            <element signature="e#8344#8351#0" />
+            <element signature="e#8466#21319#0" />
+            <element signature="e#24935#26201#0" />
+            <element signature="e#26235#26325#0" />
+          </folding>
         </state>
       </provider>
     </entry>
