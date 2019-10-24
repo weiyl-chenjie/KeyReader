@@ -189,10 +189,11 @@ class MyWindow(QMainWindow):
         cv.destroyAllWindows()
 
     def has_key_sensor_changed(self, evt):
+        conf = Config()
         if evt:  # 如果选择了钥匙到位传感器
-            self.conf.update_config(product='config', section='product', name='has_key_sensor', value='YES')
+            conf.update_config(product='config', section='product', name='has_key_sensor', value='YES')
         else:  # 如果取消了钥匙到位传感器
-            self.conf.update_config(product='config', section='product', name='has_key_sensor', value='NO')
+            conf.update_config(product='config', section='product', name='has_key_sensor', value='NO')
 
     def change_ip_plc(self):
         ip = self.Ui_MainWindow.lineEdit_IP_PLC.text()
