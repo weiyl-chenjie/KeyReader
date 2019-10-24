@@ -38,7 +38,7 @@ class MyWindow(QMainWindow):
         # 单排齿还是多排齿
         self.row_number = int(self.conf.read_config('config', 'product', 'row_number'))
         # 是否有钥匙到位传感器
-        self.key_sensor = self.conf.read_config('config', 'product', 'key_sensor').upper() == 'YES'
+        self.has_key_sensor = self.conf.read_config('config', 'product', 'has_key_sensor').upper() == 'YES'
         # # 阈值
         # self.min_threshold = int(self.conf.read_config('canny', 'min_threshold'))
         # self.max_threshold = int(self.conf.read_config('canny', 'max_threshold'))
@@ -46,7 +46,10 @@ class MyWindow(QMainWindow):
         self.ip_plc = self.conf.read_config(product=self.product, section='plc', name='ip')
         # 创建PLC实例
         self.siemens = SiemensS7Net(siemens=SiemensPLCS.S1200, ipAddress=self.ip_plc)
+        # 钥匙到位传感器上一次的状态
+        self.key_sensor_last_status = False
         self.Ui_MainWindow.comboBox_change_product.addItem('')
+        # 读取所有产品
         with sqlite3.connect('keyid.db') as conn:
             cur = conn.cursor()
             cur.execute("SELECT plant, product, marble_number, rows FROM products")
@@ -78,7 +81,7 @@ class MyWindow(QMainWindow):
             self.Ui_MainWindow.radioButton_double_row.setChecked(True)
             self.Ui_MainWindow.radioButton_single_row.setCheckable(False)
         # 是否有钥匙到位传感器
-        self.Ui_MainWindow.checkBox_key_sensor.setChecked(self.key_sensor)
+        self.Ui_MainWindow.checkBox_key_sensor.setChecked(self.has_key_sensor)
         # PLC的ip
         self.Ui_MainWindow.lineEdit_IP_PLC.setText(self.ip_plc)
 
@@ -121,10 +124,10 @@ class MyWindow(QMainWindow):
             self.setup()
 
             # 修改对应的.ini文件
-            self.conf.update_config(product=self.product, section='product', name='plant', value=self.plant)
-            self.conf.update_config(product=self.product, section='product', name='product', value=self.product)
-            self.conf.update_config(product=self.product, section='product', name='marble_number', value=str(self.marble_number))
-            self.conf.update_config(product=self.product, section='product', name='row_number', value=str(self.row_number))
+            self.conf.update_config(product='config', section='product', name='plant', value=self.plant)
+            self.conf.update_config(product='config', section='product', name='product', value=self.product)
+            self.conf.update_config(product='config', section='product', name='marble_number', value=str(self.marble_number))
+            self.conf.update_config(product='config', section='product', name='row_number', value=str(self.row_number))
 
     def manual_adjustment_parameters(self):
         os.startfile(self.product+'.ini')
@@ -164,7 +167,7 @@ class MyWindow(QMainWindow):
     def set_calibration_line(self):
         # 暂停读取摄像头进程，并释放摄像头，然后调用设置校准线的窗口
         self._thread.__del__()
-
+        self.set_calibration_line_pane.setup()
         self.set_calibration_line_pane.show()
 
     def show_video(self):
@@ -185,11 +188,11 @@ class MyWindow(QMainWindow):
         cv.waitKey()
         cv.destroyAllWindows()
 
-    def key_sensor_changed(self, evt):
+    def has_key_sensor_changed(self, evt):
         if evt:  # 如果选择了钥匙到位传感器
-            self.conf.update_config(product=self.product, section='product', name='key_sensor', value='YES')
+            self.conf.update_config(product='config', section='product', name='has_key_sensor', value='YES')
         else:  # 如果取消了钥匙到位传感器
-            self.conf.update_config(product=self.product, section='product', name='key_sensor', value='NO')
+            self.conf.update_config(product='config', section='product', name='has_key_sensor', value='NO')
 
     def change_ip_plc(self):
         ip = self.Ui_MainWindow.lineEdit_IP_PLC.text()
@@ -475,7 +478,7 @@ class MyWindow(QMainWindow):
 
     # 钥匙是否插到位
     def key_is_ready(self):
-        if self.key_sensor:  # 如果有钥匙到位传感器
+        if self.has_key_sensor:  # 如果有钥匙到位传感器
             if self.siemens.ReadBool('I4.5'):  # 读取I4.5，若为True，则返回True
                 return True
             else:

@@ -422,7 +422,7 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -609,7 +609,7 @@ color: rgb(200, 194, 15);</string>
    <sender>checkBox_key_sensor</sender>
    <signal>toggled(bool)</signal>
    <receiver>MainWindow</receiver>
-   <slot>key_sensor_changed()</slot>
+   <slot>has_key_sensor_changed()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>188</x>
@@ -661,7 +661,7 @@ color: rgb(200, 194, 15);</string>
   <slot>self_calibration()</slot>
   <slot>set_calibration_line()</slot>
   <slot>change_product()</slot>
-  <slot>key_sensor_changed()</slot>
+  <slot>has_key_sensor_changed()</slot>
   <slot>change_ip_plc()</slot>
   <slot>plc_connect_test()</slot>
  </slots>

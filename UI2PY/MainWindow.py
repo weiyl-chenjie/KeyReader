@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'MainWindow.ui',
 # licensing of 'MainWindow.ui' applies.
 #
-# Created: Tue Oct 22 10:09:12 2019
+# Created: Thu Oct 24 11:13:09 2019
 #      by: pyside2-uic  running on PySide2 5.13.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -191,13 +191,13 @@ class Ui_MainWindow(object):
         self.pushButton_start.setStyleSheet("background-color: rgb(131, 131, 131);")
         self.pushButton_start.setObjectName("pushButton_start")
         self.verticalLayout.addWidget(self.pushButton_start)
-        self.widget = QtWidgets.QWidget(self.centralwidget)
-        self.widget.setGeometry(QtCore.QRect(10, 750, 245, 96))
-        self.widget.setObjectName("widget")
-        self.formLayout = QtWidgets.QFormLayout(self.widget)
+        self.layoutWidget2 = QtWidgets.QWidget(self.centralwidget)
+        self.layoutWidget2.setGeometry(QtCore.QRect(10, 750, 245, 96))
+        self.layoutWidget2.setObjectName("layoutWidget2")
+        self.formLayout = QtWidgets.QFormLayout(self.layoutWidget2)
         self.formLayout.setContentsMargins(0, 0, 0, 0)
         self.formLayout.setObjectName("formLayout")
-        self.label_2 = QtWidgets.QLabel(self.widget)
+        self.label_2 = QtWidgets.QLabel(self.layoutWidget2)
         font = QtGui.QFont()
         font.setFamily("华文楷体")
         font.setWeight(75)
@@ -205,11 +205,11 @@ class Ui_MainWindow(object):
         self.label_2.setFont(font)
         self.label_2.setObjectName("label_2")
         self.formLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.label_2)
-        self.lineEdit_IP_PLC = QtWidgets.QLineEdit(self.widget)
+        self.lineEdit_IP_PLC = QtWidgets.QLineEdit(self.layoutWidget2)
         self.lineEdit_IP_PLC.setAlignment(QtCore.Qt.AlignCenter)
         self.lineEdit_IP_PLC.setObjectName("lineEdit_IP_PLC")
         self.formLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.lineEdit_IP_PLC)
-        self.pushButton_change_ip = QtWidgets.QPushButton(self.widget)
+        self.pushButton_change_ip = QtWidgets.QPushButton(self.layoutWidget2)
         font = QtGui.QFont()
         font.setFamily("华文楷体")
         font.setWeight(50)
@@ -219,7 +219,7 @@ class Ui_MainWindow(object):
 "color: rgb(200, 194, 15);")
         self.pushButton_change_ip.setObjectName("pushButton_change_ip")
         self.formLayout.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.pushButton_change_ip)
-        self.pushButton_plc_connect_test = QtWidgets.QPushButton(self.widget)
+        self.pushButton_plc_connect_test = QtWidgets.QPushButton(self.layoutWidget2)
         font = QtGui.QFont()
         font.setFamily("华文楷体")
         font.setWeight(50)
@@ -245,7 +245,7 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.pushButton_self_calibrate, QtCore.SIGNAL("clicked()"), MainWindow.self_calibration)
         QtCore.QObject.connect(self.pushButton_set_calibration_line, QtCore.SIGNAL("clicked()"), MainWindow.set_calibration_line)
         QtCore.QObject.connect(self.comboBox_change_product, QtCore.SIGNAL("currentTextChanged(QString)"), MainWindow.change_product)
-        QtCore.QObject.connect(self.checkBox_key_sensor, QtCore.SIGNAL("toggled(bool)"), MainWindow.key_sensor_changed)
+        QtCore.QObject.connect(self.checkBox_key_sensor, QtCore.SIGNAL("toggled(bool)"), MainWindow.has_key_sensor_changed)
         QtCore.QObject.connect(self.pushButton_change_ip, QtCore.SIGNAL("clicked()"), MainWindow.change_ip_plc)
         QtCore.QObject.connect(self.pushButton_plc_connect_test, QtCore.SIGNAL("clicked()"), MainWindow.plc_connect_test)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)

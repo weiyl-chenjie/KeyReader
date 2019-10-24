@@ -20,6 +20,7 @@ class SetCalibrationLine(QWidget, Ui_Form):
         self.setup()
 
     def setup(self):
+        self.product = self.conf.read_config(product='config', section='product', name='product')
         ptStart_bottom_x, ptStart_bottom_y = eval(
             self.conf.read_config(product=self.product, section='line', name='ptStart_bottom'))
         ptEnd_bottom_x, ptEnd_bottom_y = eval(
@@ -176,6 +177,7 @@ class SetCalibrationLine(QWidget, Ui_Form):
                             [[(self.spinBox_pts_vertical_start_x_right.value(), self.spinBox_pts_vertical_start_y_right.value()),
                              (self.spinBox_pts_vertical_end_x_right.value(), self.spinBox_pts_vertical_end_y_right.value())]]]
             pts_vertical_interval = (self.spinBox_pts_vertical_interval.value(), self.spinBox_pts_vertical_interval_right.value())
+        self.product = self.conf.read_config(product='config', section='product', name='product')
         self.conf.update_config(product=self.product, section='line', name='ptStart_bottom', value=str(ptStart_bottom))
         self.conf.update_config(product=self.product, section='line', name='ptEnd_bottom', value=str(ptEnd_bottom))
         self.conf.update_config(product=self.product, section='line', name='ptStart_top', value=str(ptStart_top))
