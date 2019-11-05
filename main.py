@@ -94,6 +94,7 @@ class MyWindow(QMainWindow):
             self.Ui_MainWindow.label_status.setText('PLC连接成功')
             if not self._thread.cap.isOpened():
                 self._thread.cap.open(0)
+            self._thread.working = True
             self._thread.start()
             self.Ui_MainWindow.label_status.setText('等待钥匙插入')
             self.Ui_MainWindow.label_status.setStyleSheet('background-color: rgb(255, 255, 127);')
